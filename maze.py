@@ -32,11 +32,11 @@ class Maze():
         no_col = self.__no_cols
         no_row = self.__no_rows
         win = self.__win
-        if cell_size*no_col > (win.height-100) or cell_size*no_row > (win.width-100):
+        if cell_size*no_col > (win.width-100) or cell_size*no_row > (win.height-100):
             raise ValueError('Input maze size larger than screen')
-        for i in range(self.__no_cols):
+        for i in range(self.__no_rows):
             rows = []
-            for j in range(self.__no_rows):
+            for j in range(self.__no_cols):
                 rows.append(Cell(self.__win))
             self.__cells.append(rows)
 
@@ -56,32 +56,30 @@ class Maze():
 
     def animate(self):
         self.__win.redraw()
-        time.sleep(0.1)
+        time.sleep(0.02)
 
     def get_conections(self):
         for row_index, row in enumerate(self.__cells):
             for col_index, cell in enumerate(row):
                 if col_index != 0:
-                    cell.conection.append((self.__cells[col_index-1][row_index], 'left_wall'))
+                    cell.conection.append((self.__cells[row_index][col_index-1], 'left_wall'))
                 if col_index != (self.__no_cols-1):
-                    cell.conection.append((self.__cells[col_index+1][row_index], 'right_wall'))
+                    cell.conection.append((self.__cells[row_index][col_index+1], 'right_wall'))
                 if row_index != 0:
-                    cell.conection.append((self.__cells[col_index][row_index-1], 'top_wall'))
+                    cell.conection.append((self.__cells[row_index-1][col_index], 'top_wall'))
                 if row_index != (self.__no_rows-1):
-                    cell.conection.append((self.__cells[col_index][row_index+1], 'bottom_wall'))
+                    cell.conection.append((self.__cells[row_index+1][col_index], 'bottom_wall'))
 
     def break_walls_r(self, cell):
         cell.visited = True
         not_visited = [ele for ele in cell.conection if not ele[0].visited]
-        if len(not_visited) == 0:
-            return
-        else:
+        while len(not_visited) != 0:
+            
             next_index = random.randrange(0, len(not_visited))
             ### extract the tuple from conected cells 0 is the cell and 1 the wall coneted to it
-            next_cell, wall = not_visited[next_index][0],  not_visited[next_index][1]
-            
-            print(cell, cell.conection)
-
+            next_ob = not_visited[next_index]  # constant 0 index for debuging
+            next_cell = next_ob[0]
+            wall = next_ob[1]
             if wall == 'right_wall':
                 setattr(cell, wall, False)
                 setattr(next_cell, 'left_wall', False)
@@ -96,4 +94,5 @@ class Maze():
                 setattr(next_cell, 'top_wall', False)
 
             self.break_walls_r(next_cell)
-
+            not_visited = [ele for ele in cell.conection if not ele[0].visited]
+        return
