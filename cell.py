@@ -8,11 +8,17 @@ class Cell:
         self.__x2 = None
         self.__y2 = None
         self.__window = window
+        
+        self.visited = False
+        self.conection = []
 
         self.top_wall = True
         self.left_wall = True
         self.bottom_wall = True
         self.right_wall = True
+
+    def __repr__(self):
+        return f'Cell object at: ({self.__x1},{self.__y1})'
 
     def draw(self, p1, p2):
         self.__x1 = p1.x
