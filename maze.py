@@ -49,7 +49,7 @@ class Maze():
                 p1 = Point(hi, wid)
                 p2 = Point(hi+size, wid+size)
                 col.draw(p1, p2)
-                self.animate()
+                #self.animate()
                 hi += size
             wid += size
             hi = i
@@ -96,3 +96,58 @@ class Maze():
             self.break_walls_r(next_cell)
             not_visited = [ele for ele in cell.conection if not ele[0].visited]
         return
+
+    def reset_visited(self):
+        for i in self.__cells:
+            for j in i:
+                j.visited = False
+
+    def solve(self):
+        start_cell = self.__cells[0][0]
+        return self._solve_r(start_cell)
+
+    def draw_mid_point(self,cell):
+        win = self.__win
+        canv = win.get_canvas()
+        dist = self.__cell_size
+        mid = dist//2
+        if dist < 10:
+            small_dist = 4
+        else:
+            small_dist = dist//2
+        x = cell.get_x_y()[0]+mid - (small_dist//2)
+        y = cell.get_x_y()[1]+mid - (small_dist//2)
+
+        p1 = Point(x, y)
+        p2 = Point(x+small_dist, y)
+        p3 = Point(x, y+small_dist)
+        p4 = Point(x+small_dist, y+small_dist)
+
+        l1, l2, l3, l4 = Line(p1, p2), Line(p1, p3), Line(p2, p4), Line(p3, p4) 
+        lines = [l1, l2, l3, l4]
+        for l in lines:
+            l.draw(canv,'red')
+
+
+    def _solve_r(self, cell):
+        if cell is self.__cells[0][0] or cell is self.__cells[-1][-1]:
+            self.draw_mid_point(cell)
+
+        paths = []
+        cell.visited = True
+        self.animate()
+        for path in cell.conection:
+            wall = getattr(cell, path[1])
+            if not wall and not path[0].visited:
+                paths.append(path)
+
+        if cell == self.__cells[-1][-1]:
+            return True
+        if len(paths) == 0:
+            return False
+
+        for p in paths:
+            cell.draw_move(p[0], True)
+            if self._solve_r(p[0]):
+                cell.draw_move(p[0])
+                return True

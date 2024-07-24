@@ -20,6 +20,9 @@ class Cell:
     def __repr__(self):
         return f'Cell object at: ({self.__x1},{self.__y1})'
 
+    def get_x_y(self):
+        return (self.__x1, self.__y1)
+
     def draw(self, p1, p2):
         self.__x1 = p1.x
         self.__y1 = p1.y
@@ -49,7 +52,7 @@ class Cell:
 
     def draw_move(self, to_cell, undo=False):
         if undo:
-            color = 'gray'
+            color = '#252525'
         else:
             color = 'red'
         

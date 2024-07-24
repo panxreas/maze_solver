@@ -14,6 +14,10 @@ def main():
 
     maze.break_walls_r(start_cell)
     maze.draw_cells(50,50)
+
+    maze.reset_visited()
+    maze.solve()
+
     win.wait_for_close()
 
 main()
